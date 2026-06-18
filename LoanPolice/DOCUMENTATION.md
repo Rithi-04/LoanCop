@@ -183,3 +183,20 @@ This is enforced securely at the route-handler layer through dependency-injected
 * **Granular Trace Logs:** Every execution step of the multi-agent decision graph is tracked. The system serializes outputs, success metrics, and compliance logs per node (e.g. Credit Risk agent, Policy Retrieval agent) into the SQLite database.
 * **Structured Override Tracking:** When a Loan Officer overrides an automated decision, the system requires and logs a written justification. Both the automated evaluation logs and manual comments are stored for subsequent audits.
 * **Manager Dashboards:** Managers have real-time access to user activity log histories, AI-to-Officer decision agreement metrics, and detailed audit trials.
+
+---
+
+## 🔍 LangSmith Tracing & Observability Setup
+
+To track prompt inputs, LLM outputs, token usage, latency, and full execution traces for the multi-agent graph, configure the LangSmith variables in your `.env` file:
+
+1. **Enable tracing:** Set `LANGCHAIN_TRACING_V2="true"`.
+2. **API Key:** Paste your API Key in `LANGCHAIN_API_KEY="your_api_key"`.
+3. **Project Name:** Group traces under a custom project name using `LANGCHAIN_PROJECT="Lend-AI-LoanPolice"`.
+
+### What gets traced automatically?
+* **Agent Executions:** Inputs, outputs, and status for each node in the LangGraph (e.g. `EligibilityAgent`, `CreditRiskAgent`).
+* **Embeddings & Vector Search:** ChromaDB queries and returned vector documents.
+* **LLM Calls:** Raw prompt formatting, system messages, model settings, output tokens, cost, and latency.
+
+Visit your runs dashboard at **[smith.langchain.com](https://smith.langchain.com/)** to see live flow diagrams and analyze execution metrics.

@@ -29,14 +29,27 @@ JWT_SECRET = os.getenv("JWT_SECRET", "supersecretjwtkeyforloanapprovalassistant1
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
 
+# LangSmith Observability Configs
+LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2", "false")
+LANGCHAIN_ENDPOINT = os.getenv("LANGCHAIN_ENDPOINT", "https://api.smith.langchain.com")
+LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY", "")
+LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT", "Lend-AI-LoanPolice")
+
+# Inject LangSmith variables into active process environment for LangChain/LangGraph to pick up
+if LANGCHAIN_TRACING_V2.lower() == "true" and LANGCHAIN_API_KEY:
+    os.environ["LANGCHAIN_TRACING_V2"] = "true"
+    os.environ["LANGCHAIN_ENDPOINT"] = LANGCHAIN_ENDPOINT
+    os.environ["LANGCHAIN_API_KEY"] = LANGCHAIN_API_KEY
+    os.environ["LANGCHAIN_PROJECT"] = LANGCHAIN_PROJECT
+
 # Storage paths
-UPLOAD_DIR = BASE_DIR / "uploads"
-CHROMA_DB_DIR = BASE_DIR / "chroma_db"
-KNOWLEDGE_BASE_DIR = BASE_DIR / "knowledgebase"
+UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", str(BASE_DIR / "uploads")))
+CHROMA_DB_DIR = Path(os.getenv("CHROMA_DB_DIR", str(BASE_DIR / "chroma_db")))
+KNOWLEDGE_BASE_DIR = Path(os.getenv("KNOWLEDGE_BASE_DIR", str(BASE_DIR / "knowledgebase")))
 
 # Ensure directories exist
-UPLOAD_DIR.mkdir(exist_ok=True)
-CHROMA_DB_DIR.mkdir(exist_ok=True)
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+CHROMA_DB_DIR.mkdir(parents=True, exist_ok=True)
 
 # Basic validation
 if not LLM_API_KEY or LLM_API_KEY == "your_openai_api_key_here":
